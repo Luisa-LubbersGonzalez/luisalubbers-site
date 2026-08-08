@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luisa Lubbers</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 0 20px;
+      color: #222;
+      line-height: 1.6;
+      background: #fafafa;
+    }
+    h1 {
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      color: #666;
+      font-style: italic;
+      margin-top: 0;
+      margin-bottom: 30px;
+    }
+    ul {
+      background: #eee;
+      padding: 14px 14px 14px 32px;
+      border-radius: 6px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    button {
+      font-family: inherit;
+      font-size: 1em;
+      padding: 8px 16px;
+      background: #1a5fb4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #144a8c;
+    }
+    #fact-box {
+      margin-top: 14px;
+      padding: 12px;
+      background: #fff3cd;
+      border-radius: 6px;
+      min-height: 20px;
+      font-style: italic;
+    }
+    a {
+      color: #1a5fb4;
+    }
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      color: #999;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Hi, Hola, I'm Luisa</h1>
+  <p class="subtitle">CSE 135 &mdash; Summer 2026</p>
+
+  <section>
+    <p>
+      I'm a 4-year Computer Science major. However, this if my first web-related class and I am looking forward to learning lots in the next 5 weeks!
+    </p>
+  </section>
+
+  <section>
+    <h2>A few things about me</h2>
+    <ul>
+      <li> I was born an raised in San Diego (native girl!) </li>
+      <li> I love going to Padres games at Petco Park </li>
+      <li> I have an old chiweenie (chihuahua-weiner dog mix), Perla </li>
+      <li> I am the oldest of two daughters </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Random fact generator</h2>
+    <p>Click for a random fact about me:</p>
+    <button onclick="showFact()">Give me a fact</button>
+    <div id="fact-box"></div>
+  </section>
+
+  <p><a href="/">&larr; Back to home</a></p>
+
+
+  <script>
+    const facts = [
+      "I am a club volleyball coach, and am starting my 4th season coaching.",
+      "I've been going to San Diego Comic Con for the past 12 years.",
+      "I've never broken a bone in my body.",
+      "I went to Japan twice in one year.",
+      "I have a macbook and iPad, but a Samsung S22 phone (not sure why)."
+    ];
+
+    function showFact() {
+      const box = document.getElementById('fact-box');
+      const randomIndex = Math.floor(Math.random() * facts.length);
+      box.textContent = facts[randomIndex];
+    }
+  </script>
+
+</body>
+</html>
