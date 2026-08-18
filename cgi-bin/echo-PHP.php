@@ -3,6 +3,7 @@ Header("Cache-Control: no-cache");
 Header("Content-Type: text/html");
 
 $method = $_SERVER['REQUEST_METHOD'];
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
 echo"<!DOCTYPE html>";
 echo"<html>";
@@ -49,7 +50,6 @@ if ($method == "GET") {
   }
 } elseif ($method =="PUT" || $method == "DELETE") {
   $rawBody = file_get_contents('php://input');
-  $contentType = $_SERVER['CONTENT_TYPE'];
   if(strpos($contentType, 'application/json') !== false) {
     $decoded = json_decode($rawBody, true);
     if (is_array($decoded)) {
