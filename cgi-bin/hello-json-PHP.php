@@ -1,10 +1,10 @@
 #!/usr/bin/php-cgi
 <?php
 Header("Cache-Control: no-cache");
-Header("Content-Type: application/json");
+Header("Content-type: application/json");
 
 $date = date("m-d-Y H:i:s");
-$address = getenv('REMOTE_ADDR');
+$address = $_SERVER['REMOTE_ADDR'];
 
 $message = array('IP' => $address, 'title' => 'Hello, PHP!', 'message' => 'This page was generated with the PHP programming language', 'heading' => 'Hello, PHP!', 'time' => $date);
 

@@ -3,8 +3,8 @@ from time import gmtime, strftime
 from os import environ
 from json import dumps
 
-print ("Cache-Control: no-cache\n")
-print ("Content-Type: application/json\n\n")
+print ("Cache-Control: no-cache")
+print ("Content-Type: application/json")
 
 date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 address = environ.get('REMOTE_ADDR')

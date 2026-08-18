@@ -17,7 +17,7 @@ echo"<p>This page was generated with PHP CGI.</p>";
 $date = date("m-d-Y H:i:s");
 echo"<p>This Program was generated at: " . $date . "</p>";
 
-$address = getenv('REMOTE_ADDR');
+$address = $_SERVER['REMOTE_ADDR'];
 echo"<p>Your IP Address is: " . $address . "</p>";
 
 echo"</body>";
