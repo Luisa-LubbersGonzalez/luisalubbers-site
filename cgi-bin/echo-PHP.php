@@ -34,8 +34,18 @@ if ($method == "GET") {
     echo "<li>" . htmlspecialchars($key) . " = " . htmlspecialchars($value) . "</li>";
   }
 } elseif ($method == "POST") {
-  foreach ($_POST as $key => $value) {
-    echo "<li>" . htmlspecialchars($key) . " = " . htmlspecialchars($value) . "</li>";
+  if (strpos($contentType, 'application/json') !== false) {
+    $rawBody = file_get_contents('php://input');
+    $decoded = json_decode($rawBody, true);
+    if (is_array($decoded)) {
+      foreach ($decoded as $key => $value) {
+        echo "<li>" . htmlspecialchars($key) . " = " . htmlspecialchars($value) . "</li>";
+      }
+    }
+  } else {
+    foreach ($_POST as $key => $value) {
+      echo "<li>" . htmlspecialchars($key) . " = " . htmlspecialchars($value) . "</li>";
+    }
   }
 } elseif ($method =="PUT" || $method == "DELETE") {
   $rawBody = file_get_contents('php://input');
