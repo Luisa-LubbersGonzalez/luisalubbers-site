@@ -1,10 +1,12 @@
 #!/usr/bin/python3
+import os
 from time import gmtime, strftime
 from os import environ
 from json import dumps
 
 print ("Cache-Control: no-cache")
 print ("Content-Type: application/json")
+print()
 
 date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 address = os.environ.get('REMOTE_ADDR')

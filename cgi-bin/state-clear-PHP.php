@@ -1,4 +1,3 @@
-#!/usr/bin/php-cgi
 <?php
 session_start();
 

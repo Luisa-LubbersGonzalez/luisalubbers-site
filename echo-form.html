@@ -16,18 +16,21 @@
     <h3>PHP</h3>
     <form method="POST" action="/cgi-bin/echo-PHP.php">
       <input type="text" name="name" placeholder="Enter a name">
+      <input type="text" name="message" placeholder="Enter a message">
       <button type="submit">Send (POST)</button>
     </form>
 
     <h3>Perl</h3>
     <form method="POST" action="/cgi-bin/perl-general-echo.pl">
       <input type="text" name="name" placeholder="Enter a name">
+      <input type="text" name="message" placeholder="Enter a message">
       <button type="submit">Send (POST)</button>
     </form>
 
     <h3>Python</h3>
     <form method="POST" action="/cgi-bin/python-general-echo.py">
       <input type="text" name="name" placeholder="Enter a name">
+      <input type="text" name="message" placeholder="Enter a message">
       <button type="submit">Send (POST)</button>
     </form>
   </div>
@@ -62,6 +65,7 @@
       </label>
 
       <label>Name: <input type="text" name="name"></label>
+      <label>Message: <input type="text" name="message"></label>
 
       <button type="submit">Send</button>
     </form>
@@ -81,6 +85,7 @@
         const method = document.getElementById('method-select').value.toUpperCase();
         const encoding = document.getElementById('encoding-select').value;
         const name = document.querySelector('#echo-form input[name="name"]').value;
+        const message = document.querySelector('#echo-form input[name="message"]').value;
 
         const endpoints = {
             php: '/cgi-bin/echo-PHP.php',
@@ -93,14 +98,14 @@
         const fetchOptions = { method: method };
 
         if (method === 'GET' || method === 'HEAD') {
-            const params = new URLSearchParams({ name: name });
+            const params = new URLSearchParams({ name: name, message: message });
             url = url + '?' + params.toString();
         } else {
             fetchOptions.headers = { 'Content-Type': encoding };
             if (encoding === 'application/json') {
-                fetchOptions.body = JSON.stringify({ name: name });
+                fetchOptions.body = JSON.stringify({ name: name, message: message });
             } else {
-                fetchOptions.body = new URLSearchParams({ name: name }).toString();
+                fetchOptions.body = new URLSearchParams({ name: name, message: message }).toString();
             }
         }
 
