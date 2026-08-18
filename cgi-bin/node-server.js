@@ -1,5 +1,47 @@
 const http = require('http');
 const url = require('url');
+const crypto = require('crypto');
+const fs = require('fs');
+
+function respondWithStatePage(res, sessionFile, sessionId, newSession) {
+    let currentUsername = '';
+    try {
+        currentUsername = fs.readFileSync(sessionFile, 'utf8');
+    } catch (err) {
+        // file doesn't exist yet — currentUsername stays empty
+    }
+
+    let html = '<!DOCTYPE html><html><head><title>Node State - Page 1</title></head><body>';
+    html += '<h1>Node State — Page 1</h1>';
+
+    if (currentUsername) {
+        html += '<p>Current username: ' + escapeHtml(currentUsername) + '</p>';
+    } else {
+        html += '<p>No name set yet.</p>';
+    }
+
+    html += '<form method="POST" action="/node/state-node-1"><label>Name: <input type="text" name="username"></label><button type="submit">Save</button></form>';
+    html += '<br/><a href="/node/state-node-2">Go to Page 2</a><br/>';
+    html += '<a href="/node/state-node-clear">Clear Session</a>';
+    html += '</body></html>';
+
+    const headers = { 'Content-Type': 'text/html' };
+    if (newSession) {
+        headers['Set-Cookie'] = `NODESESSID=${sessionId}; Path=/`;
+    }
+    res.writeHead(200, headers);
+    res.end(html);
+}
+
+function parseCookies(req) {
+    const cookieHeader = req.headers['cookie'] || '';
+    const cookies = {};
+    cookieHeader.split(';').forEach(pair => {
+        const [key, value] = pair.trim().split('=');
+        if (key) cookies[key] = value;
+    });
+    return cookies;
+}
 
 function escapeHtml(text) {
     return String(text)
@@ -10,8 +52,19 @@ function escapeHtml(text) {
         .replace(/'/g, '&#039;');
 }
 
-function sendEchoResponse(res, method, data) {
+function sendEchoResponse(res, req, method, data) {
+    const hostname = req.headers['host'];
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const datetime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const userAgent = req.headers['user-agent'];
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
     let html = '<!DOCTYPE html><html><body>';
+    html += '<p>Host name: ' + hostname + '</p>';
+    html += '<p>Time &amp; Date: ' + datetime + '</p>';
+    html += '<p>UserAgent: ' + escapeHtml(userAgent) + '</p>';
+    html += '<p>IP Address: ' + ip + '</p>';
     html += '<p><b>Method used:</b> ' + method + '</p>';
     html += '<p><b>Received data:</b></p><ul>';
     for (const key in data) {
@@ -68,7 +121,7 @@ const server = http.createServer((req, res) => {
 
         if (method === 'GET') {
             const query = parsedUrl.query;
-            sendEchoResponse(res, method, query);
+            sendEchoResponse(res, req, method, query);
         }
         else {
             let body = '';
@@ -90,9 +143,89 @@ const server = http.createServer((req, res) => {
                         data[key] = value;
                     }
                 }
-                sendEchoResponse(res, method, data);
+                sendEchoResponse(res, req, method, data);
             });
         }
+    }
+    else if (pathname === '/state1-node') {
+        const cookies = parseCookies(req);
+        let sessionId = cookies['NODESESSID'];
+        let newSession = false;
+
+        if (!sessionId) {
+            sessionId = crypto.randomUUID();
+            newSession = true;
+        }
+
+        const sessionFile = `/tmp/nodesession_${sessionId}.txt`;
+
+        if (req.method === 'POST') {
+            let body = '';
+            req.on('data', chunk => {
+                body += chunk.toString();
+            });
+            req.on('end', () => {
+                const parsedBody = new url.URLSearchParams(body);
+                const username = parsedBody.get('username');
+
+                if (username) {
+                    fs.writeFileSync(sessionFile, username, 'utf8');
+                }
+                respondWithStatePage(res, sessionFile, sessionId, newSession);
+            });
+        }
+    }
+    else if (pathname === '/state2-node') {
+        const cookies = parseCookies(req);
+        const sessionId = cookies['NODESESSID'];
+        let currentUsername = '';
+
+        if (sessionId) {
+            const sessionFile = `/tmp/nodesession_${sessionId}.txt`;
+            try {
+                currentUsername = fs.readFileSync(sessionFile, 'utf8');
+            } catch (err) {}
+        }
+
+        let html = '<!DOCTYPE html><html><head><title>Node State - Page 2</title></head><body>';
+        html += '<h1>Node State — Page 2</h1>';
+
+        if (currentUsername) {
+            html += '<p>Current username: ' + escapeHtml(currentUsername) + '</p>';
+        } else {
+            html += '<p>No name set yet.</p>';
+        }
+
+        html += '<br/><a href="/node/state1-node">Go to Page 1</a><br/>';
+        html += '<a href="/node/state-clear-node">Clear Session</a>';
+        html += '</body></html>';
+
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+    }
+    else if (pathname === '/state-clear-node') {
+        const cookies = parseCookies(req);
+        const sessionId = cookies['NODESESSID'];
+
+        if (sessionId) {
+            const sessionFile = `/tmp/nodesession_${sessionId}.txt`;
+            try {
+                fs.unlinkSync(sessionFile);
+            } catch (err) {}
+        }
+
+        let html = '<!DOCTYPE html><html><head><title>Session Cleared</title></head><body>';
+        html += '<h1>Session Cleared</h1>';
+        html += '<p>Your saved data has been removed.</p>';
+        html += '<br/><a href="/node/state1-node">Back to Page 1</a><br/>';
+        html += '<a href="/node/state2-node">Back to Page 2</a>';
+        html += '</body></html>';
+
+        res.writeHead(200, {
+            'Content-Type': 'text/html',
+            'Set-Cookie': 'NODESESSID=; Path=/; Max-Age=0'
+        });
+        res.end(html);
     }
     else { 
         res.writeHead(404, { 'Content-Type': 'text/html' });
