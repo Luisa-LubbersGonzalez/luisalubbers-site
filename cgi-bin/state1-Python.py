@@ -3,7 +3,6 @@ import os
 import uuid
 from http.cookies import SimpleCookie
 
-# Read whatever cookie string the browser sent (empty string if none)
 cookie_header = os.environ.get('HTTP_COOKIE', '')
 
 # Parse it into a usable object
