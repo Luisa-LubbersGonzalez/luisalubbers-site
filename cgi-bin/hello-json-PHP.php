@@ -1,7 +1,7 @@
 #!/usr/bin/php-cgi
 <?php
 Header("Cache-Control: no-cache");
-header("Content-Type: application/json");
+Header("Content-Type: application/json");
 
 $date = date("m-d-Y H:i:s");
 $address = $_SERVER['REMOTE_ADDR'];
