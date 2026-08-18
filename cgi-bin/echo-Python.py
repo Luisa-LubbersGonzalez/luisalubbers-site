@@ -41,12 +41,17 @@ if method == "GET":
     form_data = parse_qs(query_string)
     name = form_data.get('name', [''])[0]
     message = form_data.get('message', [''])[0]
-elif (method == "POST"):
+elif method == "POST":
     content_length = int(os.environ.get('CONTENT_LENGTH', 0))
     post_data = sys.stdin.read(content_length)
-    form_data = parse_qs(post_data)
-    name = form_data.get('name', [''])[0]
-    message = form_data.get('message', [''])[0]
+    if 'application/json' in content_type:
+        form_data = json.loads(post_data)
+        name = form_data.get('name', '')
+        message = form_data.get('message', '')
+    else:
+        form_data = parse_qs(post_data)
+        name = form_data.get('name', [''])[0]
+        message = form_data.get('message', [''])[0]
 elif method == "PUT" or method == "DELETE":
     content_length = int(os.environ.get('CONTENT_LENGTH', 0))
     post_data = sys.stdin.read(content_length)
