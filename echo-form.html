@@ -14,7 +14,7 @@
     <p>Basic mode (JavaScript disabled or unavailable) — pick a language below:</p>
 
     <h3>PHP</h3>
-    <form method="POST" action="/cgi-bin/echo-php.php">
+    <form method="POST" action="/cgi-bin/echo-PHP.php">
       <input type="text" name="name" placeholder="Enter a name">
       <button type="submit">Send (POST)</button>
     </form>
@@ -78,7 +78,7 @@
         event.preventDefault();
 
         const language = document.getElementById('language-select').value;
-        const method = document.getElementById('method-select').value;
+        const method = document.getElementById('method-select').value.toUpperCase();
         const encoding = document.getElementById('encoding-select').value;
         const name = document.querySelector('#echo-form input[name="name"]').value;
 
@@ -88,27 +88,30 @@
             python: '/cgi-bin/python-general-echo.py',
             node: '/node/echo'
         };
-        const url = endpoints[language];
 
-        let body;
-        if (encoding === 'application/json') {
-            body = JSON.stringify({ name: name });
+        let url = endpoints[language];
+        const fetchOptions = { method: method };
+
+        if (method === 'GET' || method === 'HEAD') {
+            const params = new URLSearchParams({ name: name });
+            url = url + '?' + params.toString();
         } else {
-            body = new URLSearchParams({ name: name }).toString();
+            fetchOptions.headers = { 'Content-Type': encoding };
+            if (encoding === 'application/json') {
+                fetchOptions.body = JSON.stringify({ name: name });
+            } else {
+                fetchOptions.body = new URLSearchParams({ name: name }).toString();
+            }
         }
 
-        fetch(url, {
-            method: method,
-            headers: { 'Content-Type': encoding },
-            body: body
-        })
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('response-output').innerHTML = data;
-        })
-        .catch(error => {
-            document.getElementById('response-output').textContent = 'Error: ' + error;
-        });
+        fetch(url, fetchOptions)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('response-output').innerHTML = data;
+            })
+            .catch(error => {
+                document.getElementById('response-output').textContent = 'Error: ' + error;
+            });
     });
   </script>
 
