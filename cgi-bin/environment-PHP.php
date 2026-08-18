@@ -1,9 +1,10 @@
 #!/usr/bin/php-cgi
+<?php
 Header("Cache-Control: no-cache");
 Header("Content-Type: text/html");
 
-echo"<!DOCTYPE html>";"
-echo"<html>";"
+echo"<!DOCTYPE html>";
+echo"<html>";
 echo"<head>";
 echo"<title>Environment Variables</title>";
 echo"</head>";
@@ -15,5 +16,6 @@ foreach ($_SERVER as $variable => $value) {
   echo "<b>$variable:</b> $value<br />\n";
 }
 
-echo"</body>";"
+echo"</body>";
 echo"</html>";
+?>
