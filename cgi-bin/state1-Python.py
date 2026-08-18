@@ -1,15 +1,18 @@
 #!/usr/bin/python3
 import os
+import sys
 import uuid
+import html
 from http.cookies import SimpleCookie
+from urllib.parse import parse_qs
+
+print("Cache-Control: no-cache")
+print("Content-Type: text/html")
 
 cookie_header = os.environ.get('HTTP_COOKIE', '')
-
-# Parse it into a usable object
 cookies = SimpleCookie()
 cookies.load(cookie_header)
 
-# Try to find our session cookie
 if 'PYSESSID' in cookies:
     session_id = cookies['PYSESSID'].value
     new_session = False
@@ -17,13 +20,44 @@ else:
     session_id = str(uuid.uuid4())
     new_session = True
 
-# Build the outgoing headers
-print("Content-Type: text/html")
+session_file = f"/tmp/pysession_{session_id}.txt"
+
+method = os.environ.get('REQUEST_METHOD', 'GET')
+if method == 'POST':
+    content_length = int(os.environ.get('CONTENT_LENGTH', 0))
+    post_data = sys.stdin.read(content_length)
+    parsed_data = parse_qs(post_data)
+    if 'username' in parsed_data:
+        with open(session_file, 'w') as f:
+            f.write(parsed_data['username'][0])
+if 'username' in parsed_data:
+    with open(session_file, 'w') as f:
+        f.write(parsed_data['username'][0])
+
+try:
+    with open(session_file, 'r') as f:
+        current_username = f.read()
+except FileNotFoundError:
+    current_username = ''
+
 if new_session:
     print(f"Set-Cookie: PYSESSID={session_id}; Path=/")
-print()  # blank line — REQUIRED to separate headers from body
+print()
 
-print("<html><body>")
-print(f"<p>Session ID: {session_id}</p>")
-print(f"<p>New session? {new_session}</p>")
-print("</body></html>")
+print("<!DOCTYPE html><html><head><title>Python State - Page 1</title></head><body>")
+print("<h1>Python State — Page 1</h1>")
+
+if current_username:
+    print(f"<p>Current username: {html.escape(current_username)}</p>")
+else:
+    print("<p>No name set yet.</p>")
+
+print("<form method=\"POST\" action=\"/cgi-bin/state-python-1.py\">")
+print("<label>Name: <input type=\"text\" name=\"username\"></label>")
+print("<button type=\"submit\">Save</button>")
+print("</form>")
+print("<br/>")
+print("<a href=\"/cgi-bin/state-python-2.py\">Go to Page 2</a><br/>")
+print("<a href=\"/cgi-bin/state-python-clear.py\">Clear Session</a>")
+print("</body>")
+print("</html>")
