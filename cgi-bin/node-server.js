@@ -11,8 +11,8 @@ function respondWithStatePage(res, sessionFile, sessionId, newSession) {
         // file doesn't exist yet — currentUsername stays empty
     }
 
-    let html = '<!DOCTYPE html><html><head><title>Node State - Page 1</title></head><body>';
-    html += '<h1>Node State — Page 1</h1>';
+    let html = '<!DOCTYPE html><html><head><title>Node State Page 1</title></head><body>';
+    html += '<h1>Node State Page 1</h1>';
 
     if (currentUsername) {
         html += '<p>Current username: ' + escapeHtml(currentUsername) + '</p>';
@@ -20,9 +20,9 @@ function respondWithStatePage(res, sessionFile, sessionId, newSession) {
         html += '<p>No name set yet.</p>';
     }
 
-    html += '<form method="POST" action="/node/state-node-1"><label>Name: <input type="text" name="username"></label><button type="submit">Save</button></form>';
-    html += '<br/><a href="/node/state-node-2">Go to Page 2</a><br/>';
-    html += '<a href="/node/state-node-clear">Clear Session</a>';
+    html += '<form method="POST" action="/node/state1-node"><label>Name: <input type="text" name="username"></label><button type="submit">Save</button></form>';
+    html += '<br/><a href="/node/state2-node">Go to Page 2</a><br/>';
+    html += '<a href="/node/state-clear-node">Clear Session</a>';
     html += '</body></html>';
 
     const headers = { 'Content-Type': 'text/html' };
@@ -174,6 +174,9 @@ const server = http.createServer((req, res) => {
                 respondWithStatePage(res, sessionFile, sessionId, newSession);
             });
         }
+        else {
+            respondWithStatePage(res, sessionFile, sessionId, newSession);
+        }
     }
     else if (pathname === '/state2-node') {
         const cookies = parseCookies(req);
@@ -187,8 +190,8 @@ const server = http.createServer((req, res) => {
             } catch (err) {}
         }
 
-        let html = '<!DOCTYPE html><html><head><title>Node State - Page 2</title></head><body>';
-        html += '<h1>Node State — Page 2</h1>';
+        let html = '<!DOCTYPE html><html><head><title>Node State Page 2</title></head><body>';
+        html += '<h1>Node State Page 2</h1>';
 
         if (currentUsername) {
             html += '<p>Current username: ' + escapeHtml(currentUsername) + '</p>';
