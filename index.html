@@ -5,16 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Luisa Lubbers Gonzalez - CSE 135</title>
-  <link rel="icon" type="image/png" href=/favicon.png">
+  <link rel="icon" type="image/png" href="/favicon.png">
   <style>
     body {
       font-family: Georgia, 'Times New Roman', serif;
       max-width: 900px;
       margin: 40px auto;
       padding: 0 20px;
-      color: @222;
+      color: #222;
       line-height: 1.5;
     }
+
     header {
      margin-bottom: 40px;
     }
@@ -33,7 +34,7 @@
       padding-bottom: 6px;
     }
     ul { 
-      backgroundL #eee;
+      background: #eee;
       padding: 12px 12px 12px 32px;
       border-radius: 4px;
     }
@@ -54,6 +55,29 @@
       font-style: italic;
       font-size: 0.9em;
     }
+    .hw2-grid {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      background: #eee;
+      padding: 14px;
+      border-radius: 4px;
+    }
+    .hw2-column {
+      min-width: 140px;
+    }
+    .hw2-column h3 {
+      margin: 0 0 6px 0;
+      font-size: 1em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+    .hw2-column ul {
+      background: none;
+      padding: 0;
+      margin: 0;
+      list-style-position: inside;
+    }
    </style>
   </head>
 <body>
@@ -70,6 +94,48 @@
          <li><a href="/hw1/hello.php"> PHP </a></li>
          <li><a href="/hw1/report.html"> HW1 Analytics</a></li>
       </ul>
+    </section>
+
+    <section>
+      <h2>Homework 2</h2>
+      <div class="hw2-grid">
+        <div class="hw2-column">
+          <h3>Perl</h3>
+          <ul>
+            <li><a href="/cgi-bin/perl-hello-html-world.pl">Hello, Perl!</a></li>
+            <li><a href="/cgi-bin/perl-hello-json-world.pl">Hello, Perl! (JSON)</a></li>
+            <li><a href="/cgi-bin/perl-env.pl">Environment Variables</a></li>
+            <li><a href="/cgi-bin/perl-get-echo.pl">GET Echo</a></li>
+            <li><a href="/cgi-bin/perl-post-echo.pl">POST Echo</a></li>
+            <li><a href="/cgi-bin/perl-general-echo.pl">General Echo</a></li>
+            <li><a href="/cgi-bin/Sessioning-Perl">Sessioning</a></li>
+          </ul>
+        </div>
+        <div class="hw2-column">
+          <h3>PHP</h3>
+          <ul>
+            <li><a href="/cgi-bin/hello-html-PHP.php">Hello, PHP!</a></li>
+            <li><a href="/cgi-bin/hello-json-PHP.php">Hello, PHP! (JSON)</a></li>
+            <li><a href="/cgi-bin/environment-PHP.php">Environment Variables</a></li>
+            <li><a href="/cgi-bin/php-get-echo.php">GET Echo</a></li>
+            <li><a href="/cgi-bin/php-post-echo.php">POST Echo</a></li>
+            <li><a href="/cgi-bin/php-general-echo.php">General Echo</a></li>
+          </ul>
+        </div>
+        <div class="hw2-column">
+          <h3>Python</h3>
+          <ul>
+            <li><a href="/cgi-bin/hello-html-Python.py"> Hello, Python!</a></li>
+            <li><a href="/cgi-bin/hello-json-Python.py"> Hello, Python! (JSON)</a></li>
+          </ul>
+        </div>
+        <div class="hw2-column">
+          <h3>NodeJS</h3>
+          <ul>
+            <li><a href="/cgi-bin/nodejs-hello-world.js"> Hello, NodeJS!</a></li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <section>
