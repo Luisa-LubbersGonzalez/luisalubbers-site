@@ -7,7 +7,7 @@ from http.cookies import SimpleCookie
 from urllib.parse import parse_qs
 
 print("Cache-Control: no-cache")
-print("Content-Type: text/html")
+print("Content-Type: text/html; charset=utf-8")
 
 cookie_header = os.environ.get('HTTP_COOKIE', '')
 cookies = SimpleCookie()
@@ -30,9 +30,6 @@ if method == 'POST':
     if 'username' in parsed_data:
         with open(session_file, 'w') as f:
             f.write(parsed_data['username'][0])
-if 'username' in parsed_data:
-    with open(session_file, 'w') as f:
-        f.write(parsed_data['username'][0])
 
 try:
     with open(session_file, 'r') as f:
@@ -52,12 +49,12 @@ if current_username:
 else:
     print("<p>No name set yet.</p>")
 
-print("<form method=\"POST\" action=\"/cgi-bin/state-python-1.py\">")
+print("<form method=\"POST\" action=\"/cgi-bin/state1-Python.py\">")
 print("<label>Name: <input type=\"text\" name=\"username\"></label>")
 print("<button type=\"submit\">Save</button>")
 print("</form>")
 print("<br/>")
-print("<a href=\"/cgi-bin/state-python-2.py\">Go to Page 2</a><br/>")
-print("<a href=\"/cgi-bin/state-python-clear.py\">Clear Session</a>")
+print("<a href=\"/cgi-bin/state2-Python.py\">Go to Page 2</a><br/>")
+print("<a href=\"/cgi-bin/state-clear-Python.py\">Clear Session</a>")
 print("</body>")
 print("</html>")

@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($submitted)) {
 $curr_username = $_SESSION['username'] ?? '';
 
 echo "<!DOCTYPE html>";
-echo "<html><head><title>PHP State Demo - Page 1</title></head><body>";
+echo "<html><head><title>PHP State - Page 1</title></head><body>";
 echo "<h1>PHP State — Page 1</h1>";
 
 if ($curr_username) {
