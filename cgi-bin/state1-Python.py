@@ -27,30 +27,36 @@ if method == 'POST':
     content_length = int(os.environ.get('CONTENT_LENGTH', 0))
     post_data = sys.stdin.read(content_length)
     parsed_data = parse_qs(post_data)
-    if 'username' in parsed_data:
+    if 'name' in parsed_data:
         with open(session_file, 'w') as f:
-            f.write(parsed_data['username'][0])
+            f.write(parsed_data['name'][0])
 
 try:
     with open(session_file, 'r') as f:
-        current_username = f.read()
+        current_name = f.read()
 except FileNotFoundError:
-    current_username = ''
+    current_name = ''
 
 if new_session:
     print(f"Set-Cookie: PYSESSID={session_id}; Path=/")
 print()
 
-print("<!DOCTYPE html><html><head><title>Python State - Page 1</title></head><body>")
-print("<h1>Python State — Page 1</h1>")
+print("<!DOCTYPEhtml>")
+print("<html>")
+print("<head>")
+print("<title>Python State - Page 1</title>")
+print("</head>")
+print("<body>")
 
-if current_username:
-    print(f"<p>Current username: {html.escape(current_username)}</p>")
+print("<h1 align=\center\">Python State — Page 1</h1>")
+
+if current_name:
+    print(f"<p><b>Name:</b> {html.escape(current_name)}</p>")
 else:
-    print("<p>No name set yet.</p>")
+    print("<p><b>Name:</b> You do not have a name set</p>")
 
 print("<form method=\"POST\" action=\"/cgi-bin/state1-Python.py\">")
-print("<label>Name: <input type=\"text\" name=\"username\"></label>")
+print("<label><b>Name:</b> <input type=\"text\" name=\"name\"></label>")
 print("<button type=\"submit\">Save</button>")
 print("</form>")
 print("<br/>")

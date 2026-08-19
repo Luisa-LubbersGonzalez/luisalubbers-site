@@ -18,12 +18,7 @@ ip = os.environ.get('REMOTE_ADDR', 'Unknown')
 
 date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
-print("<!DOCTYPE html>")
-print("<html>")
-print("<head>")
-print("<title>Echoing</title>")
-print("</head>")
-print("<body>")
+print("<!DOCTYPE html><html><head><title>Echoing</title></head><body>")
 print('<h1 align="center">Echoing Endpoint</h1>')
 
 print(f"Host name: {hostname}<br>")
@@ -33,8 +28,7 @@ print(f"IP Address: {ip}<br>")
 
 print(f"<p><b>Method used:</b> {method}</p>")
 
-print("<p><b>Received data:</b></p>")
-print("<ul>")
+print("<p><b>Received data:</b></p><ul>")
 
 if method == "GET":
     query_string = os.environ.get('QUERY_STRING', '')
@@ -69,5 +63,4 @@ print(f"<li>message = {html.escape(message)}</li>")
 
 print("</ul>");
 
-print("</body>");
-print("</html>");
+print("</body></html>");

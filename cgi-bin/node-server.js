@@ -7,30 +7,28 @@ function respondWithStatePage(res, sessionFile, sessionId, newSession) {
     let currentUsername = '';
     try {
         currentUsername = fs.readFileSync(sessionFile, 'utf8');
-    } catch (err) {
-        // file doesn't exist yet — currentUsername stays empty
-    }
-
-    let html = '<!DOCTYPE html><html><head><title>Node State Page 1</title></head><body>';
-    html += '<h1>Node State Page 1</h1>';
-
-    if (currentUsername) {
-        html += '<p>Current username: ' + escapeHtml(currentUsername) + '</p>';
-    } else {
-        html += '<p>No name set yet.</p>';
-    }
-
-    html += '<form method="POST" action="/node/state1-node"><label>Name: <input type="text" name="username"></label><button type="submit">Save</button></form>';
-    html += '<br/><a href="/node/state2-node">Go to Page 2</a><br/>';
-    html += '<a href="/node/state-clear-node">Clear Session</a>';
-    html += '</body></html>';
+    } catch (err) {}
 
     const headers = { 'Content-Type': 'text/html' };
     if (newSession) {
         headers['Set-Cookie'] = `NODESESSID=${sessionId}; Path=/`;
     }
     res.writeHead(200, headers);
-    res.end(html);
+
+    res.write('<!DOCTYPE html><html><head><title>Node State Page 1</title></head><body>');
+    res.write('<h1>Node State Page 1</h1>');
+
+    if (currentUsername) {
+        res.write('<p><b>Name:</b> ' + escapeHtml(currentUsername) + '</p>');
+    } else {
+        res.write('<p><b>Name:</b> You do not have a name set</p>');
+    }
+
+    res.write('<form method="POST" action="/node/state1-node"><label>Name: <input type="text" name="name"></label><button type="submit">Save</button></form>');
+    res.write('<br/><a href="/node/state2-node">Go to Page 2</a><br/>');
+    res.write('<a href="/node/state-clear-node">Clear Session</a>');
+    res.write('</body></html>');
+    res.end();
 }
 
 function parseCookies(req) {
@@ -60,19 +58,19 @@ function sendEchoResponse(res, req, method, data) {
     const userAgent = req.headers['user-agent'];
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-    let html = '<!DOCTYPE html><html><body>';
-    html += '<p>Host name: ' + hostname + '</p>';
-    html += '<p>Time &amp; Date: ' + datetime + '</p>';
-    html += '<p>UserAgent: ' + escapeHtml(userAgent) + '</p>';
-    html += '<p>IP Address: ' + ip + '</p>';
-    html += '<p><b>Method used:</b> ' + method + '</p>';
-    html += '<p><b>Received data:</b></p><ul>';
-    for (const key in data) {
-        html += '<li>' + escapeHtml(key) + ' = ' + escapeHtml(data[key]) + '</li>';
-    }
-    html += '</ul></body></html>';
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(html);
+    res.write('<!DOCTYPE html><html><body>');
+    res.write('<p>Host name: ' + hostname + '</p>');
+    res.write('<p>Time &amp; Date: ' + datetime + '</p>');
+    res.write('<p>UserAgent: ' + escapeHtml(userAgent) + '</p>');
+    res.write('<p>IP Address: ' + ip + '</p>');
+    res.write('<p><b>Method used:</b> ' + method + '</p>');
+    res.write('<p><b>Received data:</b></p><ul>');
+    for (const key in data) {
+        res.write('<li>' + escapeHtml(key) + ' = ' + escapeHtml(data[key]) + '</li>');
+    }
+    res.write('</ul></body></html>');
+    res.end();
 }
 
 const server = http.createServer((req, res) => {
@@ -81,40 +79,38 @@ const server = http.createServer((req, res) => {
     
     if (pathname === '/hello-world-NodeJS') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end('<!DOCTYPE html><html><head><title>Hello World</title></head><body><h1 align="center">Greetings HTML World!</h1><p>Hello World!</p><p>This page was generated with Node.js</p><p>This program was generated at: ' + new Date().toISOString() + '</p><p>Your IP Address is: ' + (req.headers['x-forwarded-for'] || req.socket.remoteAddress) + '</p></body></html>');
+        res.write('<!DOCTYPE html><html><head><title>Hello World</title></head><body><h1 align="center">Greetings HTML World!</h1><p>Hello World!</p><p>This page was generated with Node.js</p><p>This program was generated at: ' + new Date().toISOString() + '</p><p>Your IP Address is: ' + (req.headers['x-forwarded-for'] || req.socket.remoteAddress) + '</p></body></html>');
+        res.end();
     }
     else if (pathname === '/hello-json-NodeJS') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
+        res.write(JSON.stringify({
             title: 'Hello JSON!',
             heading: 'Hello, JSON!',
             message: 'This page was generated with Node.js',
             time: new Date().toISOString(),
             IP: req.headers['x-forwarded-for'] || req.socket.remoteAddress
         }));
+        res.end();
     }
     else if (pathname === '/environment-NodeJS') {
-        let html = '<!DOCTYPE html><html><head><title>Environment Variables</title></head><body>';
-        html += '<h1 align="center">Environment Variables</h1>';
-
-        html += '<p><b>Request Method:</b> ' + req.method + '</p>';
-        html += '<p><b>Request URL:</b> ' + req.url + '</p>';
-        html += '<p><b>HTTP Version:</b> ' + req.httpVersion + '</p>';
-        html += '<p><b>IP Address:</b> ' + (req.headers['x-forwarded-for'] || req.socket.remoteAddress) + '</p>';
-
-        html += '<hr><h3>Request Headers:</h3>';
-        for (const key in req.headers) {
-            html += '<b>' + key + ':</b> ' + req.headers[key] + '<br/>';
-        }
-
-        html += '<hr><h3>Node.js Runtime Info:</h3>';
-        html += '<p>Node.js Version: ' + process.version + '</p>';
-        html += '<p>OS Platform: ' + process.platform + '</p>';
-        html += '<p>OS Architecture: ' + process.arch + '</p>';
-
-        html += '</body></html>';
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
+        res.write('<!DOCTYPE html><html><head><title>Environment Variables</title></head><body>');
+        res.write('<h1 align="center">Environment Variables</h1>');
+        res.write('<p><b>Request Method:</b> ' + req.method + '</p>');
+        res.write('<p><b>Request URL:</b> ' + req.url + '</p>');
+        res.write('<p><b>HTTP Version:</b> ' + req.httpVersion + '</p>');
+        res.write('<p><b>IP Address:</b> ' + (req.headers['x-forwarded-for'] || req.socket.remoteAddress) + '</p>');
+        res.write('<hr><h3>Request Headers:</h3>');
+        for (const key in req.headers) {
+            res.write('<b>' + key + ':</b> ' + req.headers[key] + '<br/>');
+        }
+        res.write('<hr><h3>Node.js Runtime Info:</h3>');
+        res.write('<p>Node.js Version: ' + process.version + '</p>');
+        res.write('<p>OS Platform: ' + process.platform + '</p>');
+        res.write('<p>OS Architecture: ' + process.arch + '</p>');
+        res.write('</body></html>');
+        res.end();
     }
     else if (pathname === '/echo-NodeJS') {
         const method = req.method;
@@ -125,15 +121,12 @@ const server = http.createServer((req, res) => {
         }
         else {
             let body = '';
-
             req.on('data', chunk => {
                 body += chunk.toString();
             });
-
             req.on('end', () => {
                 const contentType = req.headers['content-type'] || '';
                 let data;
-
                 if (contentType.includes('application/json')) {
                     data = JSON.parse(body);
                 } else {
@@ -166,10 +159,9 @@ const server = http.createServer((req, res) => {
             });
             req.on('end', () => {
                 const parsedBody = new url.URLSearchParams(body);
-                const username = parsedBody.get('username');
-
-                if (username) {
-                    fs.writeFileSync(sessionFile, username, 'utf8');
+                const name = parsedBody.get('name');
+                if (name) {
+                    fs.writeFileSync(sessionFile, name, 'utf8');
                 }
                 respondWithStatePage(res, sessionFile, sessionId, newSession);
             });
@@ -181,30 +173,29 @@ const server = http.createServer((req, res) => {
     else if (pathname === '/state2-node') {
         const cookies = parseCookies(req);
         const sessionId = cookies['NODESESSID'];
-        let currentUsername = '';
+        let currentName = '';
 
         if (sessionId) {
             const sessionFile = `/tmp/nodesession_${sessionId}.txt`;
             try {
-                currentUsername = fs.readFileSync(sessionFile, 'utf8');
+                currentName = fs.readFileSync(sessionFile, 'utf8');
             } catch (err) {}
         }
 
-        let html = '<!DOCTYPE html><html><head><title>Node State Page 2</title></head><body>';
-        html += '<h1>Node State Page 2</h1>';
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.write('<!DOCTYPE html><html><head><title>Node State Page 2</title></head><body>');
+        res.write('<h1>Node State Page 2</h1>');
 
-        if (currentUsername) {
-            html += '<p>Current username: ' + escapeHtml(currentUsername) + '</p>';
+        if (currentName) {
+            res.write('<p><b>Name:</b> ' + escapeHtml(currentName) + '</p>');
         } else {
-            html += '<p>No name set yet.</p>';
+            res.write('<p><b>Name:</b> You do not have a name set</p>');
         }
 
-        html += '<br/><a href="/node/state1-node">Go to Page 1</a><br/>';
-        html += '<a href="/node/state-clear-node">Clear Session</a>';
-        html += '</body></html>';
-
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
+        res.write('<br/><a href="/node/state1-node">Go to Page 1</a><br/>');
+        res.write('<a href="/node/state-clear-node">Clear Session</a>');
+        res.write('</body></html>');
+        res.end();
     }
     else if (pathname === '/state-clear-node') {
         const cookies = parseCookies(req);
@@ -216,19 +207,17 @@ const server = http.createServer((req, res) => {
                 fs.unlinkSync(sessionFile);
             } catch (err) {}
         }
-
-        let html = '<!DOCTYPE html><html><head><title>Session Cleared</title></head><body>';
-        html += '<h1>Session Cleared</h1>';
-        html += '<p>Your saved data has been removed.</p>';
-        html += '<br/><a href="/node/state1-node">Back to Page 1</a><br/>';
-        html += '<a href="/node/state2-node">Back to Page 2</a>';
-        html += '</body></html>';
-
         res.writeHead(200, {
             'Content-Type': 'text/html',
             'Set-Cookie': 'NODESESSID=; Path=/; Max-Age=0'
         });
-        res.end(html);
+        res.write('<!DOCTYPE html><html><head><title>Session Cleared</title></head><body>');
+        res.write('<h1>Session Cleared</h1>');
+        res.write('<p>Your saved data has been removed.</p>');
+        res.write('<br/><a href="/node/state1-node">Back to Page 1</a><br/>');
+        res.write('<a href="/node/state2-node">Back to Page 2</a>');
+        res.write('</body></html>');
+        res.end();
     }
     else { 
         res.writeHead(404, { 'Content-Type': 'text/html' });

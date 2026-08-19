@@ -2,7 +2,6 @@
 import os
 from http.cookies import SimpleCookie
 
-#read the cookie, get the session ID, and read the session file
 cookie_header = os.environ.get('HTTP_COOKIE', '')
 cookies = SimpleCookie()
 cookies.load(cookie_header)
@@ -16,15 +15,19 @@ if 'PYSESSID' in cookies:
         pass
 
 print("Cache-Control: no-cache")
-print("Content-Type: text/html; charset=utf-8")
+print("Content-Type: text/html")
 print("Set-Cookie: PYSESSID=; Path=/; Max-Age=0")
 print()
 
-print("<!DOCTYPE html><html><head><title>Session Cleared</title></head><body>")
+print("<!DOCTYPE html>")
+print("<html>")
+print("<head>")
+print("<title>Session Cleared</title>")
+print("</head>")
+print("<body>")
 print("<h1>Session Cleared</h1>")
 
-print("Your saved data has been cleared.")
-
+print("Your saved data has been removed.")
 
 print("<br/>")
 print("<a href=\"/cgi-bin/state1-Python.py\">Go to Page 1</a><br/>")
